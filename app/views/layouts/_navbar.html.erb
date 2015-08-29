@@ -1,0 +1,60 @@
+<%# Navbar on Top %>
+<% user = User.find_by_id(session[:user_id]) %> <%# nil if not found %>
+<% flash_class = flash[:success_navbar]? "bg-success text-success" : "bg-danger text-danger" %>
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle Navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">Programming Practice 2015</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <% unless user.nil? %>
+          <li<%= " class=active" if session[:navbar_category]=="home" %>><a href="/">Home</a></li>
+          <li<%= " class=active" if session[:navbar_category]=="schedule" %>><a href="/schedule">Schedule</a></li>
+          <li<%= " class=active" if session[:navbar_category]=="board" %>><a href="/board">Board</a></li>
+          <% if user.is_admin %>
+            <li<%= " class=active" if session[:navbar_category]=="admin" %>><a href="/admin">Admin</a></li>
+          <% end %>
+        <% end %>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li<%= " class=active" if session[:navbar_category]=="credits" %>><a href="/credits">Credits</a></li>
+      </ul>
+      <% unless user.nil? %>
+        <ul class="nav navbar-nav navbar-right">
+          <li<%= " class=active" if session[:navbar_category]=="userinfo" %>><a href="/user/info/<%= user.id %>">Hello, <%= user.username %></a></li>
+          <li><a href="/auth/signout">SignOut</a></li>
+        </ul>
+      <% else %>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="/auth">SignUp</a></li>
+        </ul>
+        <form class="navbar-form navbar-right" role="form" action="/auth/signin" method="POST">
+          <input class="form-control" name="username" type="text" placeholder="Name" required/>
+          <input class="form-control" name="password" type="password" placeholder="Password" required/>
+          <button type="submit" class="btn btn-default">SignIn</button>
+        </form>
+      <% end %>
+      <% if flash[:message_navbar].present? %>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#" class="<%= flash_class %>" style="margin-top:5px;padding-top:10px;padding-bottom:10px;"><%= flash[:message_navbar] %></a></li>
+        </ul>
+      <% end %>
+    </div>
+  </div>
+</nav>
+<script>
+  $(document).ready(function(){
+    function setNavbarBrand() {
+      $(".navbar-brand").text($("#navbar").width()==720? "4190.103A" : "Programming Practice 2015");
+    }
+    setNavbarBrand();
+    $(window).resize(function() {setNavbarBrand()});
+  });
+</script>
